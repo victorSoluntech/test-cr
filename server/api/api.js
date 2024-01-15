@@ -12,6 +12,7 @@ const xl = require('excel4node');
 const { result } = require('lodash');
 let Client = require('ssh2-sftp-client');
 const logger = require('../util/winstonLogger');
+const { importsController } = require('./imports');
 
 // Declare internals
 
@@ -2369,6 +2370,18 @@ exports.plugin = {
                 console.error(error);
             }
         }
+
+        server.route({
+          method: "POST",
+          path: "/import-expense-cards-csv",
+          handler: importsController.importTimeExpenseCards,
+          config: {
+            timeout: {
+              socket: 9000000,
+            },
+            pre: [{ method: KnackAuth.authenticate_knack }],
+          },
+        });
 
         server.route({
           method: "POST",
